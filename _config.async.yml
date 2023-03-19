@@ -1,0 +1,93 @@
+
+
+en:
+  site:
+    title: Silvora的个人博客
+
+zh-Hans: 
+  site:
+    title: Silvora的个人博客
+
+
+user:
+  name: Silvora
+  first_name: ilvora
+  last_name: S
+  email: 757909414@qq.com
+  domain: https://blog.silvora.top
+  avatar: /img/avatar.jpg
+  describe: 一个简单的博客网站。
+
+#图片懒加载
+lazyload:
+  enable: true
+
+# 归档页 默认下归档页时间轴卡片显示了标题和摘要信息，如果设置为 less 将只显示标题。type: 显示方式，可选 more || less
+archive:
+  type: more # less more
+
+sidebar:
+  social:  # 社交地址
+    - name: github
+      icon: fab fa-github-square
+      url: https://github.com/Silvora
+    - name: facebook
+      icon: fab fa-facebook
+      url: https://facebook.com
+    - name: google
+      icon: fab fa-google-plus-square
+      url: https://google.com
+    - name: tumblr
+      icon: fab fa-tumblr-square
+      url: https://tumblr.com
+  info:
+    - key: 前端
+      val: Vue/React
+    - key: 后端
+      val: Node/GO
+    - key: 其它
+      val: Flutter
+
+footer:
+  copyrightYear: 2023
+  powered:
+    enable: false
+
+# 代码高亮 Highlight
+highlight:
+  theme: true 
+  title: default
+  copy: true
+  lang: true
+  code_word_wrap: fasle 
+  height_limit: 200 # 超出时，显示折叠按钮
+
+
+
+categorie_card:
+  enable: true
+  len: 2
+  #list: ['Vue','React','Node','Go','App']
+  list: ['Vue','React']
+
+
+
+
+banner:
+  default:
+    type: img
+    bgurl: https://pic1.zhimg.com/v2-b3c2c6745b9421a13a3c4706b19223b3_r.jpg?source=1940ef5c
+    bannerTitle: 树深时见鹿，<br>溪午不闻钟。
+    #bannerText: Hi my new friend!
+  about:
+    type: img
+    bgurl: https://pic1.zhimg.com/v2-b3c2c6745b9421a13a3c4706b19223b3_r.jpg?source=1940ef5c
+    bannerTitle: 树深时见鹿，<br>溪午不闻钟。
+    #bannerText: Hi my new friend!
+
+top_bars:
+  - title: 首页
+    url: /
+  - title: 归档
+    url: /archives/
+    noswup: true
