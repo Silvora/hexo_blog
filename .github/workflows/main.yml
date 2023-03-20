@@ -1,0 +1,22 @@
+name: Blog_Hexo
+
+on:
+  push:
+    branches: [ "master" ]
+
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Restart
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{secrets.HOST}}
+        username: "root"
+        password: ${{secrets.PASSWORD}}
+        port: 22
+        script: |
+          cd /usr/local/nginx/html && rm -rf hexo_blog &&
+          git clone https://github.com/Silvora/hexo_blog.git
