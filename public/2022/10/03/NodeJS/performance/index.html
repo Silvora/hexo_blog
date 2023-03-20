@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="面试官：Node性能如何进行监控以及优化？  一、 是什么Node作为一门服务端语言，性能方面尤为重要，其衡量指标一般有如下：  CPU 内存 I&#x2F;O 网络  CPU主要分成了两部分：  CPU负载：在某个时间段内，占用以及等待CPU的进程总数 CPU使用率：CPU时间占用状况，等于 1 - 空闲CPU时间(idle time) &#x2F; CPU总时间  这两个指标都是用来评估系统当">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Node性能如何进行监控以及优化？">
+<meta property="og:url" content="http://silvora.com/2022/10/03/NodeJS/performance/index.html">
+<meta property="og:site_name" content="Silvora的个人博客">
+<meta property="og:description" content="面试官：Node性能如何进行监控以及优化？  一、 是什么Node作为一门服务端语言，性能方面尤为重要，其衡量指标一般有如下：  CPU 内存 I&#x2F;O 网络  CPU主要分成了两部分：  CPU负载：在某个时间段内，占用以及等待CPU的进程总数 CPU使用率：CPU时间占用状况，等于 1 - 空闲CPU时间(idle time) &#x2F; CPU总时间  这两个指标都是用来评估系统当">
+<meta property="og:locale">
+<meta property="og:image" content="http://silvora.com/img/404.jpg">
+<meta property="article:published_time" content="2022-10-03T09:43:42.000Z">
+<meta property="article:modified_time" content="2023-03-20T14:54:15.425Z">
+<meta property="article:author" content="Silvora">
+<meta property="article:tag" content="一个简单的博客网站。">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://silvora.com/img/404.jpg">
+
+    <meta name="keywords" content="一个简单的博客网站。">
+
+
+<title >Node性能如何进行监控以及优化？</title>
+
+<!-- Favicon -->
+
+    <link href='/img/favicon.svg?v=2.0.3' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/favicon.svg?v=2.0.3' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/locomotive-scroll@4.1.4/dist/locomotive-scroll.min.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"silvora.com","author":"Silvora","root":"/","typed_text":null,"theme_version":"2.0.3","theme":{"switch":true,"default":"style-light"},"favicon":{"logo":"/img/favicon.svg","icon16":"/img/favicon.svg","icon32":"/img/favicon.svg","appleTouchIcon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","showText":"(/≧▽≦/)咦！又好了！","hideText":"(●—●)喔哟，崩溃啦！"},"i18n":{"placeholder":"搜索...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","user_tag":"fas fa-user-alt","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":200},"search":{"enable":true,"type":"local","href":"https://www.google.com/search?q=site:","domain":null,"path":"search.xml"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2023-03-20 22:54:15"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.0.3" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+ 
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" data-scroll-container style="opacity: 0">
+          <div data-scroll-section id="content" class="trm-scroll-section">
+
+            <div class="locomotive-scroll__sticky-target" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none;"></div>
+
+            <!-- top bar -->
+            <header class="trm-top-bar" data-scroll data-scroll-sticky data-scroll-target=".locomotive-scroll__sticky-target" data-scroll-offset="-10">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            S<span>ilvora</span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a data-no-swup href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <div id="trm-search-btn" class="trm-search-btn">
+            <i class="iconfont fas fa-search"></i>
+        </div>
+        
+                
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner" data-scroll data-scroll-direction="vertical">
+    
+    <!-- banner cover -->
+    <img style="object-position:top;object-fit:cover;" alt="banner" class="trm-banner-cover" data-scroll data-scroll-direction="vertical" data-scroll-speed="-3" src="https://pic1.zhimg.com/v2-b3c2c6745b9421a13a3c4706b19223b3_r.jpg?source=1940ef5c">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container" data-scroll data-scroll-direction="vertical" data-scroll-speed="0">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            Node性能如何进行监控以及优化？
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2022
+                                    </span
+                                ></li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <a href="#about-triger" data-scroll-to="#about-triger" data-scroll-offset="-130" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </a>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div id="page-sidebar" class="col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    
+
+<div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card" data-scroll data-scroll-repeat data-scroll-sticky data-scroll-target=".locomotive-scroll__sticky-target" data-scroll-offset="60"> 
+    
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.jpg">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Silvora
+    </h5>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/Silvora" title="github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github-square"></i>
+        </a>
+    
+        <a href="https://facebook.com" title="facebook" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-facebook"></i>
+        </a>
+    
+        <a href="https://google.com" title="google" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-google-plus-square"></i>
+        </a>
+    
+        <a href="https://tumblr.com" title="tumblr" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-tumblr-square"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                前端:
+            </div>
+            <div class="trm-label trm-label-light">
+                Vue/React
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                后端:
+            </div>
+            <div class="trm-label trm-label-light">
+                Node/GO
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                其它:
+            </div>
+            <div class="trm-label trm-label-light">
+                Flutter
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    <div class="trm-divider trm-mb-40 trm-mt-40"></div>
+    <!-- action button -->
+    <div class="text-center">
+        <a href="mailto:757909414@qq.com" class="trm-btn">
+            联系我
+            <i class="iconfont far fa-envelope"></i>
+        </a>
+    </div>
+    <!-- action button end -->
+
+    
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div id="page-content" class="col-lg-8">
+                <div class="trm-content" id="trm-content">
+                    <div data-scroll data-scroll-repeat data-scroll-offset="500" id="about-triger"></div>
+
+                    <div id="post-info" class="row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            10/03
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            17:43
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Silvora
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <h1 id="面试官：Node性能如何进行监控以及优化？"><a href="#面试官：Node性能如何进行监控以及优化？" class="headerlink" title="面试官：Node性能如何进行监控以及优化？"></a>面试官：Node性能如何进行监控以及优化？</h1><p> <img src="https://static.vue-js.com/bb37dae0-d179-11eb-ab90-d9ae814b240d.png" loading="lazy" onerror='this.onerror=null;this.src="/img/404.jpg"'></p>
+<h2 id="一、-是什么"><a href="#一、-是什么" class="headerlink" title="一、 是什么"></a>一、 是什么</h2><p><code>Node</code>作为一门服务端语言，性能方面尤为重要，其衡量指标一般有如下：</p>
+<ul>
+<li>CPU</li>
+<li>内存</li>
+<li>I&#x2F;O</li>
+<li>网络</li>
+</ul>
+<h3 id="CPU"><a href="#CPU" class="headerlink" title="CPU"></a>CPU</h3><p>主要分成了两部分：</p>
+<ul>
+<li>CPU负载：在某个时间段内，占用以及等待CPU的进程总数</li>
+<li>CPU使用率：CPU时间占用状况，等于 1 - 空闲CPU时间(idle time) &#x2F; CPU总时间</li>
+</ul>
+<p>这两个指标都是用来评估系统当前CPU的繁忙程度的量化指标</p>
+<p><code>Node</code>应用一般不会消耗很多的<code>CPU</code>，如果<code>CPU</code>占用率高，则表明应用存在很多同步操作，导致异步任务回调被阻塞</p>
+<h3 id="内存指标"><a href="#内存指标" class="headerlink" title="内存指标"></a>内存指标</h3><p>内存是一个非常容易量化的指标。 内存占用率是评判一个系统的内存瓶颈的常见指标。 对于Node来说，内部内存堆栈的使用状态也是一个可以量化的指标</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// /app/lib/memory.js</span></span><br><span class="line"><span class="keyword">const</span> os = <span class="built_in">require</span>(<span class="string">&#x27;os&#x27;</span>);</span><br><span class="line"><span class="comment">// 获取当前Node内存堆栈情况</span></span><br><span class="line"><span class="keyword">const</span> &#123; rss, heapUsed, heapTotal &#125; = process.<span class="title function_">memoryUsage</span>();</span><br><span class="line"><span class="comment">// 获取系统空闲内存</span></span><br><span class="line"><span class="keyword">const</span> sysFree = os.<span class="title function_">freemem</span>();</span><br><span class="line"><span class="comment">// 获取系统总内存</span></span><br><span class="line"><span class="keyword">const</span> sysTotal = os.<span class="title function_">totalmem</span>();</span><br><span class="line"></span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = &#123;</span><br><span class="line">  <span class="attr">memory</span>: <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      <span class="attr">sys</span>: <span class="number">1</span> - sysFree / sysTotal,  <span class="comment">// 系统内存占用率</span></span><br><span class="line">      <span class="attr">heap</span>: heapUsed / headTotal,   <span class="comment">// Node堆内存占用率</span></span><br><span class="line">      <span class="attr">node</span>: rss / sysTotal,         <span class="comment">// Node占用系统内存的比例</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>rss：表示node进程占用的内存总量。</li>
+<li>heapTotal：表示堆内存的总量。</li>
+<li>heapUsed：实际堆内存的使用量。</li>
+<li>external ：外部程序的内存使用量，包含Node核心的C++程序的内存使用量</li>
+</ul>
+<p>在<code>Node</code>中，一个进程的最大内存容量为1.5GB。因此我们需要减少内存泄露</p>
+<h3 id="磁盘-I-x2F-O"><a href="#磁盘-I-x2F-O" class="headerlink" title="磁盘 I&#x2F;O"></a>磁盘 I&#x2F;O</h3><p>硬盘的<code> IO</code> 开销是非常昂贵的，硬盘 IO 花费的 CPU 时钟周期是内存的 164000 倍</p>
+<p>内存 <code>IO </code>比磁盘<code> IO</code> 快非常多，所以使用内存缓存数据是有效的优化方法。常用的工具如 <code>redis</code>、<code>memcached </code>等</p>
+<p>并不是所有数据都需要缓存，访问频率高，生成代价比较高的才考虑是否缓存，也就是说影响你性能瓶颈的考虑去缓存，并且而且缓存还有缓存雪崩、缓存穿透等问题要解决</p>
+<h2 id="二、如何监控"><a href="#二、如何监控" class="headerlink" title="二、如何监控"></a>二、如何监控</h2><p>关于性能方面的监控，一般情况都需要借助工具来实现</p>
+<p>这里采用<code>Easy-Monitor 2.0</code>，其是轻量级的 <code>Node.js</code> 项目内核性能监控 + 分析工具，在默认模式下，只需要在项目入口文件 <code>require</code> 一次，无需改动任何业务代码即可开启内核级别的性能监控分析</p>
+<p>使用方法如下：</p>
+<p>在你的项目入口文件中按照如下方式引入，当然请传入你的项目名称：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> easyMonitor = <span class="built_in">require</span>(<span class="string">&#x27;easy-monitor&#x27;</span>);</span><br><span class="line"><span class="title function_">easyMonitor</span>(<span class="string">&#x27;你的项目名称&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>打开你的浏览器，访问 <code>http://localhost:12333</code> ，即可看到进程界面</p>
+<p>关于定制化开发、通用配置项以及如何动态更新配置项详见官方文档</p>
+<h2 id="三、如何优化"><a href="#三、如何优化" class="headerlink" title="三、如何优化"></a>三、如何优化</h2><p>关于<code>Node</code>的性能优化的方式有：</p>
+<ul>
+<li>使用最新版本Node.js</li>
+<li>正确使用流 Stream</li>
+<li>代码层面优化</li>
+<li>内存管理优化</li>
+</ul>
+<h3 id="使用最新版本Node-js"><a href="#使用最新版本Node-js" class="headerlink" title="使用最新版本Node.js"></a>使用最新版本Node.js</h3><p>每个版本的性能提升主要来自于两个方面：</p>
+<ul>
+<li>V8 的版本更新</li>
+<li>Node.js 内部代码的更新优化</li>
+</ul>
+<h3 id="正确使用流-Stream"><a href="#正确使用流-Stream" class="headerlink" title="正确使用流 Stream"></a>正确使用流 Stream</h3><p>在<code>Node</code>中，很多对象都实现了流，对于一个大文件可以通过流的形式发送，不需要将其完全读入内存</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> http = <span class="built_in">require</span>(<span class="string">&#x27;http&#x27;</span>);</span><br><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&#x27;fs&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// bad</span></span><br><span class="line">http.<span class="title function_">createServer</span>(<span class="keyword">function</span> (<span class="params">req, res</span>) &#123;</span><br><span class="line">    fs.<span class="title function_">readFile</span>(__dirname + <span class="string">&#x27;/data.txt&#x27;</span>, <span class="keyword">function</span> (<span class="params">err, data</span>) &#123;</span><br><span class="line">        res.<span class="title function_">end</span>(data);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// good</span></span><br><span class="line">http.<span class="title function_">createServer</span>(<span class="keyword">function</span> (<span class="params">req, res</span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> stream = fs.<span class="title function_">createReadStream</span>(__dirname + <span class="string">&#x27;/data.txt&#x27;</span>);</span><br><span class="line">    stream.<span class="title function_">pipe</span>(res);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="代码层面优化"><a href="#代码层面优化" class="headerlink" title="代码层面优化"></a>代码层面优化</h3><p>合并查询，将多次查询合并一次，减少数据库的查询次数</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// bad</span></span><br><span class="line"><span class="keyword">for</span> user_id <span class="keyword">in</span> userIds </span><br><span class="line">     <span class="keyword">let</span> account = user_account.<span class="title function_">findOne</span>(user_id)</span><br><span class="line"></span><br><span class="line"><span class="comment">// good</span></span><br><span class="line"><span class="keyword">const</span> user_account_map = &#123;&#125;   <span class="comment">// 注意这个对象将会消耗大量内存。</span></span><br><span class="line">user_account.<span class="title function_">find</span>(user_id <span class="keyword">in</span> user_ids).<span class="title function_">forEach</span>(<span class="params">account</span>)&#123;</span><br><span class="line">    user_account_map[account.<span class="property">user_id</span>] =  account</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">for</span> user_id <span class="keyword">in</span> userIds </span><br><span class="line">    <span class="keyword">var</span> account = user_account_map[user_id]</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="内存管理优化"><a href="#内存管理优化" class="headerlink" title="内存管理优化"></a>内存管理优化</h3><p>在 V8 中，主要将内存分为新生代和老生代两代：</p>
+<ul>
+<li>新生代：对象的存活时间较短。新生对象或只经过一次垃圾回收的对象</li>
+<li>老生代：对象存活时间较长。经历过一次或多次垃圾回收的对象</li>
+</ul>
+<p>若新生代内存空间不够，直接分配到老生代</p>
+<p>通过减少内存占用，可以提高服务器的性能。如果有内存泄露，也会导致大量的对象存储到老生代中，服务器性能会大大降低</p>
+<p>如下面情况：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> buffer = fs.<span class="title function_">readFileSync</span>(__dirname + <span class="string">&#x27;/source/index.htm&#x27;</span>);</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">use</span>(</span><br><span class="line">    <span class="title function_">mount</span>(<span class="string">&#x27;/&#x27;</span>, <span class="keyword">async</span> (ctx) =&gt; &#123;</span><br><span class="line">        ctx.<span class="property">status</span> = <span class="number">200</span>;</span><br><span class="line">        ctx.<span class="property">type</span> = <span class="string">&#x27;html&#x27;</span>;</span><br><span class="line">        ctx.<span class="property">body</span> = buffer;</span><br><span class="line">        leak.<span class="title function_">push</span>(fs.<span class="title function_">readFileSync</span>(__dirname + <span class="string">&#x27;/source/index.htm&#x27;</span>));</span><br><span class="line">    &#125;)</span><br><span class="line">);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> leak = [];</span><br></pre></td></tr></table></figure>
+
+<p><code>leak</code>的内存非常大，造成内存泄露，应当避免这样的操作，通过减少内存使用，是提高服务性能的手段之一</p>
+<p>而节省内存最好的方式是使用池，其将频用、可复用对象存储起来，减少创建和销毁操作</p>
+<p>例如有个图片请求接口，每次请求，都需要用到类。若每次都需要重新new这些类，并不是很合适，在大量请求时，频繁创建和销毁这些类，造成内存抖动</p>
+<p>使用对象池的机制，对这种频繁需要创建和销毁的对象保存在一个对象池中。每次用到该对象时，就取对象池空闲的对象，并对它进行初始化操作，从而提高框架的性能</p>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000039327565">https://segmentfault.com/a/1190000039327565</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/50055740">https://zhuanlan.zhihu.com/p/50055740</a></li>
+<li><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000010231628">https://segmentfault.com/a/1190000010231628</a></li>
+</ul>
+
+</article>
+    
+    
+</div>
+<div id="post-next-prev" class="row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation" data-scroll data-scroll-offset="40">
+        <a href="/2022/10/03/NodeJS/paging/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/block.jpg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/Node/">
+                    Node
+                </a>
+            </div>
+            <h5>
+                <a href="/2022/10/03/NodeJS/paging/" class="trm-anima-link">
+                    设计一个分页功能, 怎么设计?
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>22/10/03</li>
+                <li>17:43</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation" data-scroll data-scroll-offset="40">
+        <a href="/2022/10/03/NodeJS/process/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/block.jpg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/Node/">
+                    Node
+                </a>
+            </div>
+            <h5>
+                <a href="/2022/10/03/NodeJS/process/" class="trm-anima-link">
+                    Node 中的 process 的理解？
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>22/10/03</li>
+                <li>17:43</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-scroll-animation" data-scroll data-scroll-offset="50">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2023- 2023</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Silvora</span>
+        </div>
+    
+
+      
+
+     
+
+     
+</footer>
+ 
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            <div class="trm-fixed-container" data-scroll data-scroll-sticky data-scroll-target=".locomotive-scroll__sticky-target" data-scroll-offset="-10">
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+          </div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+
+  </div>
+  <!-- app wrapper end -->
+
+  
+<div class="trm-search-popup">
+    <div class="trm-search-header">
+        <span class="trm-search-popup-btn-close">
+            <i class="iconfont fas fa-times"></i>
+        </span>
+    </div>
+    <div class="form trm-search-form">
+        <input class="trm-search-input" type="text" placeholder="搜索...">
+    </div>
+    <div class="trm-search-result-container">
+
+    </div>
+</div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/locomotive-scroll@4.1.4/dist/locomotive-scroll.min.js"></script>
+
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+
+    
+        
+<script src="https://unpkg.com/hexo-generator-searchdb@1.4.0/dist/search.js"></script>
+
+        <script src="/js/plugins/local_search.js?v=2.0.3"></script>
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+    <script data-swup-reload-script>
+        (function () {
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+
+
+
+<script id="async-script" src="/js/main.js?v=2.0.3"></script>
+
+</body>
+
+</html>

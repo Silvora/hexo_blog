@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="面试官：说说Loader和Plugin的区别？编写Loader，Plugin的思路？ 一、区别前面两节我们有提到Loader与Plugin对应的概念，先来回顾下  loader 是文件加载器，能够加载资源文件，并对这些文件进行一些处理，诸如编译、压缩等，最终一起打包到指定的文件中 plugin 赋予了 webpack 各种灵活的功能，例如打包优化、资源管理、环境变量注入等，目的是解决 loader">
+<meta property="og:type" content="article">
+<meta property="og:title" content="说说Loader和Plugin的区别？">
+<meta property="og:url" content="http://silvora.com/2022/11/23/webpack/Loader_Plugin/index.html">
+<meta property="og:site_name" content="Silvora的个人博客">
+<meta property="og:description" content="面试官：说说Loader和Plugin的区别？编写Loader，Plugin的思路？ 一、区别前面两节我们有提到Loader与Plugin对应的概念，先来回顾下  loader 是文件加载器，能够加载资源文件，并对这些文件进行一些处理，诸如编译、压缩等，最终一起打包到指定的文件中 plugin 赋予了 webpack 各种灵活的功能，例如打包优化、资源管理、环境变量注入等，目的是解决 loader">
+<meta property="og:locale">
+<meta property="og:image" content="http://silvora.com/img/404.jpg">
+<meta property="og:image" content="http://silvora.com/img/404.jpg">
+<meta property="article:published_time" content="2022-11-23T02:04:44.000Z">
+<meta property="article:modified_time" content="2023-03-20T14:47:20.191Z">
+<meta property="article:author" content="Silvora">
+<meta property="article:tag" content="一个简单的博客网站。">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://silvora.com/img/404.jpg">
+
+    <meta name="keywords" content="一个简单的博客网站。">
+
+
+<title >说说Loader和Plugin的区别？</title>
+
+<!-- Favicon -->
+
+    <link href='/img/favicon.svg?v=2.0.3' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/favicon.svg?v=2.0.3' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/locomotive-scroll@4.1.4/dist/locomotive-scroll.min.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"silvora.com","author":"Silvora","root":"/","typed_text":null,"theme_version":"2.0.3","theme":{"switch":true,"default":"style-light"},"favicon":{"logo":"/img/favicon.svg","icon16":"/img/favicon.svg","icon32":"/img/favicon.svg","appleTouchIcon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","showText":"(/≧▽≦/)咦！又好了！","hideText":"(●—●)喔哟，崩溃啦！"},"i18n":{"placeholder":"搜索...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","user_tag":"fas fa-user-alt","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":200},"search":{"enable":true,"type":"local","href":"https://www.google.com/search?q=site:","domain":null,"path":"search.xml"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2023-03-20 22:47:20"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.0.3" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+ 
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" data-scroll-container style="opacity: 0">
+          <div data-scroll-section id="content" class="trm-scroll-section">
+
+            <div class="locomotive-scroll__sticky-target" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none;"></div>
+
+            <!-- top bar -->
+            <header class="trm-top-bar" data-scroll data-scroll-sticky data-scroll-target=".locomotive-scroll__sticky-target" data-scroll-offset="-10">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            S<span>ilvora</span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a data-no-swup href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <div id="trm-search-btn" class="trm-search-btn">
+            <i class="iconfont fas fa-search"></i>
+        </div>
+        
+                
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner" data-scroll data-scroll-direction="vertical">
+    
+    <!-- banner cover -->
+    <img style="object-position:top;object-fit:cover;" alt="banner" class="trm-banner-cover" data-scroll data-scroll-direction="vertical" data-scroll-speed="-3" src="https://pic1.zhimg.com/v2-b3c2c6745b9421a13a3c4706b19223b3_r.jpg?source=1940ef5c">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container" data-scroll data-scroll-direction="vertical" data-scroll-speed="0">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            说说Loader和Plugin的区别？
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2022
+                                    </span
+                                ></li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <a href="#about-triger" data-scroll-to="#about-triger" data-scroll-offset="-130" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </a>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div id="page-sidebar" class="col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    
+
+<div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card" data-scroll data-scroll-repeat data-scroll-sticky data-scroll-target=".locomotive-scroll__sticky-target" data-scroll-offset="60"> 
+    
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.jpg">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Silvora
+    </h5>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/Silvora" title="github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github-square"></i>
+        </a>
+    
+        <a href="https://facebook.com" title="facebook" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-facebook"></i>
+        </a>
+    
+        <a href="https://google.com" title="google" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-google-plus-square"></i>
+        </a>
+    
+        <a href="https://tumblr.com" title="tumblr" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-tumblr-square"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                前端:
+            </div>
+            <div class="trm-label trm-label-light">
+                Vue/React
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                后端:
+            </div>
+            <div class="trm-label trm-label-light">
+                Node/GO
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                其它:
+            </div>
+            <div class="trm-label trm-label-light">
+                Flutter
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    <div class="trm-divider trm-mb-40 trm-mt-40"></div>
+    <!-- action button -->
+    <div class="text-center">
+        <a href="mailto:757909414@qq.com" class="trm-btn">
+            联系我
+            <i class="iconfont far fa-envelope"></i>
+        </a>
+    </div>
+    <!-- action button end -->
+
+    
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div id="page-content" class="col-lg-8">
+                <div class="trm-content" id="trm-content">
+                    <div data-scroll data-scroll-repeat data-scroll-offset="500" id="about-triger"></div>
+
+                    <div id="post-info" class="row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            11/23
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            10:04
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Silvora
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <h1 id="面试官：说说Loader和Plugin的区别？编写Loader，Plugin的思路？"><a href="#面试官：说说Loader和Plugin的区别？编写Loader，Plugin的思路？" class="headerlink" title="面试官：说说Loader和Plugin的区别？编写Loader，Plugin的思路？"></a>面试官：说说Loader和Plugin的区别？编写Loader，Plugin的思路？</h1><p><img src="https://static.vue-js.com/93042280-a894-11eb-ab90-d9ae814b240d.png" loading="lazy" onerror='this.onerror=null;this.src="/img/404.jpg"'></p>
+<h2 id="一、区别"><a href="#一、区别" class="headerlink" title="一、区别"></a>一、区别</h2><p>前面两节我们有提到<code>Loader</code>与<code>Plugin</code>对应的概念，先来回顾下</p>
+<ul>
+<li>loader 是文件加载器，能够加载资源文件，并对这些文件进行一些处理，诸如编译、压缩等，最终一起打包到指定的文件中</li>
+<li>plugin 赋予了 webpack 各种灵活的功能，例如打包优化、资源管理、环境变量注入等，目的是解决 loader 无法实现的其他事</li>
+</ul>
+<p>从整个运行时机上来看，如下图所示：</p>
+<p><img src="https://static.vue-js.com/9a04ec40-a7c2-11eb-ab90-d9ae814b240d.png" loading="lazy" onerror='this.onerror=null;this.src="/img/404.jpg"'></p>
+<p>可以看到，两者在运行时机上的区别：</p>
+<ul>
+<li>loader 运行在打包文件之前</li>
+<li>plugins 在整个编译周期都起作用</li>
+</ul>
+<p>在<code> Webpack</code> 运行的生命周期中会广播出许多事件，<code>Plugin</code> 可以监听这些事件，在合适的时机通过<code>Webpack</code>提供的 <code>API </code>改变输出结果</p>
+<p>对于<code>loader</code>，实质是一个转换器，将A文件进行编译形成B文件，操作的是文件，比如将<code>A.scss</code>或<code>A.less</code>转变为<code>B.css</code>，单纯的文件转换过程</p>
+<h2 id="二、编写loader"><a href="#二、编写loader" class="headerlink" title="二、编写loader"></a>二、编写loader</h2><p>在编写 <code>loader</code> 前，我们首先需要了解 <code>loader</code> 的本质</p>
+<p>其本质为函数，函数中的 <code>this</code> 作为上下文会被 <code>webpack</code> 填充，因此我们不能将 <code>loader</code>设为一个箭头函数</p>
+<p>函数接受一个参数，为 <code>webpack</code> 传递给 <code>loader</code> 的文件源内容</p>
+<p>函数中 <code>this</code> 是由 <code>webpack</code> 提供的对象，能够获取当前 <code>loader</code> 所需要的各种信息</p>
+<p>函数中有异步操作或同步操作，异步操作通过 <code>this.callback</code> 返回，返回值要求为 <code>string</code> 或者 <code>Buffer</code></p>
+<p>代码如下所示：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 导出一个函数，source为webpack传递给loader的文件源内容</span></span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = <span class="keyword">function</span>(<span class="params">source</span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> content = <span class="title function_">doSomeThing2JsString</span>(source);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 如果 loader 配置了 options 对象，那么this.query将指向 options</span></span><br><span class="line">    <span class="keyword">const</span> options = <span class="variable language_">this</span>.<span class="property">query</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 可以用作解析其他模块路径的上下文</span></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">&#x27;this.context&#x27;</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/*</span></span><br><span class="line"><span class="comment">     * this.callback 参数：</span></span><br><span class="line"><span class="comment">     * error：Error | null，当 loader 出错时向外抛出一个 error</span></span><br><span class="line"><span class="comment">     * content：String | Buffer，经过 loader 编译后需要导出的内容</span></span><br><span class="line"><span class="comment">     * sourceMap：为方便调试生成的编译后内容的 source map</span></span><br><span class="line"><span class="comment">     * ast：本次编译生成的 AST 静态语法树，之后执行的 loader 可以直接使用这个 AST，进而省去重复生成 AST 的过程</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="variable language_">this</span>.<span class="title function_">callback</span>(<span class="literal">null</span>, content); <span class="comment">// 异步</span></span><br><span class="line">    <span class="keyword">return</span> content; <span class="comment">// 同步</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>一般在编写<code>loader</code>的过程中，保持功能单一，避免做多种功能</p>
+<p>如<code>less</code>文件转换成 <code>css </code>文件也不是一步到位，而是 <code>less-loader</code>、<code>css-loader</code>、<code>style-loader</code>几个 <code>loader </code>的链式调用才能完成转换</p>
+<h2 id="三、编写plugin"><a href="#三、编写plugin" class="headerlink" title="三、编写plugin"></a>三、编写plugin</h2><p>由于<code>webpack</code>基于发布订阅模式，在运行的生命周期中会广播出许多事件，插件通过监听这些事件，就可以在特定的阶段执行自己的插件任务</p>
+<p>在之前也了解过，<code>webpack</code>编译会创建两个核心对象：</p>
+<ul>
+<li>compiler：包含了 webpack 环境的所有的配置信息，包括 options，loader 和 plugin，和 webpack 整个生命周期相关的钩子</li>
+<li>compilation：作为 plugin 内置事件回调函数的参数，包含了当前的模块资源、编译生成资源、变化的文件以及被跟踪依赖的状态信息。当检测到一个文件变化，一次新的 Compilation 将被创建</li>
+</ul>
+<p>如果自己要实现<code>plugin</code>，也需要遵循一定的规范：</p>
+<ul>
+<li>插件必须是一个函数或者是一个包含 <code>apply</code> 方法的对象，这样才能访问<code>compiler</code>实例</li>
+<li>传给每个插件的 <code>compiler</code> 和 <code>compilation</code> 对象都是同一个引用，因此不建议修改</li>
+<li>异步的事件需要在插件处理完任务时调用回调函数通知 <code>Webpack</code> 进入下一个流程，不然会卡住</li>
+</ul>
+<p>实现<code>plugin</code>的模板如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">MyPlugin</span> &#123;</span><br><span class="line">    <span class="comment">// Webpack 会调用 MyPlugin 实例的 apply 方法给插件实例传入 compiler 对象</span></span><br><span class="line">  apply (compiler) &#123;</span><br><span class="line">    <span class="comment">// 找到合适的事件钩子，实现自己的插件功能</span></span><br><span class="line">    compiler.<span class="property">hooks</span>.<span class="property">emit</span>.<span class="title function_">tap</span>(<span class="string">&#x27;MyPlugin&#x27;</span>, <span class="function"><span class="params">compilation</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="comment">// compilation: 当前打包构建流程的上下文</span></span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(compilation);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// do something...</span></span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在 <code>emit</code> 事件发生时，代表源文件的转换和组装已经完成，可以读取到最终将输出的资源、代码块、模块及其依赖，并且可以修改输出资源的内容</p>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://webpack.docschina.org/api/loaders/">https://webpack.docschina.org/api/loaders/</a></li>
+<li><a target="_blank" rel="noopener" href="https://webpack.docschina.org/api/compiler-hooks/">https://webpack.docschina.org/api/compiler-hooks/</a></li>
+<li><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000039877943">https://segmentfault.com/a/1190000039877943</a></li>
+<li><a target="_blank" rel="noopener" href="https://vue3js.cn/interview">https://vue3js.cn/interview</a></li>
+</ul>
+
+</article>
+    
+    
+</div>
+<div id="post-next-prev" class="row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation" data-scroll data-scroll-offset="40">
+        <a href="/2022/11/23/webpack/Loader/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/block.jpg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/Webpack/">
+                    Webpack
+                </a>
+            </div>
+            <h5>
+                <a href="/2022/11/23/webpack/Loader/" class="trm-anima-link">
+                    webpack中常见的Loader？
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>22/11/23</li>
+                <li>10:04</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation" data-scroll data-scroll-offset="40">
+        <a href="/2022/11/23/webpack/Plugin/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/block.jpg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/Webpack/">
+                    Webpack
+                </a>
+            </div>
+            <h5>
+                <a href="/2022/11/23/webpack/Plugin/" class="trm-anima-link">
+                    webpack中常见的Plugin？
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>22/11/23</li>
+                <li>10:04</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-scroll-animation" data-scroll data-scroll-offset="50">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2023- 2023</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Silvora</span>
+        </div>
+    
+
+      
+
+     
+
+     
+</footer>
+ 
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            <div class="trm-fixed-container" data-scroll data-scroll-sticky data-scroll-target=".locomotive-scroll__sticky-target" data-scroll-offset="-10">
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+          </div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+
+  </div>
+  <!-- app wrapper end -->
+
+  
+<div class="trm-search-popup">
+    <div class="trm-search-header">
+        <span class="trm-search-popup-btn-close">
+            <i class="iconfont fas fa-times"></i>
+        </span>
+    </div>
+    <div class="form trm-search-form">
+        <input class="trm-search-input" type="text" placeholder="搜索...">
+    </div>
+    <div class="trm-search-result-container">
+
+    </div>
+</div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/locomotive-scroll@4.1.4/dist/locomotive-scroll.min.js"></script>
+
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+
+    
+        
+<script src="https://unpkg.com/hexo-generator-searchdb@1.4.0/dist/search.js"></script>
+
+        <script src="/js/plugins/local_search.js?v=2.0.3"></script>
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+    <script data-swup-reload-script>
+        (function () {
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+
+
+
+<script id="async-script" src="/js/main.js?v=2.0.3"></script>
+
+</body>
+
+</html>

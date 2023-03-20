@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="面试官：说说你对immutable的理解？如何应用在react项目中？  一、是什么Immutable，不可改变的，在计算机中，即指一旦创建，就不能再被更改的数据 对 Immutable 对象的任何修改或添加删除操作都会返回一个新的 Immutable 对象 Immutable 实现的原理是 Persistent Data Structure（持久化数据结构）:  用一种数据结构来保存数据 当数据">
+<meta property="og:type" content="article">
+<meta property="og:title" content="对immutable的理解？">
+<meta property="og:url" content="http://silvora.com/2023/02/16/React/immutable/index.html">
+<meta property="og:site_name" content="Silvora的个人博客">
+<meta property="og:description" content="面试官：说说你对immutable的理解？如何应用在react项目中？  一、是什么Immutable，不可改变的，在计算机中，即指一旦创建，就不能再被更改的数据 对 Immutable 对象的任何修改或添加删除操作都会返回一个新的 Immutable 对象 Immutable 实现的原理是 Persistent Data Structure（持久化数据结构）:  用一种数据结构来保存数据 当数据">
+<meta property="og:locale">
+<meta property="og:image" content="http://silvora.com/img/404.jpg">
+<meta property="og:image" content="http://silvora.com/img/404.jpg">
+<meta property="article:published_time" content="2023-02-16T15:09:26.000Z">
+<meta property="article:modified_time" content="2023-03-20T15:08:00.892Z">
+<meta property="article:author" content="Silvora">
+<meta property="article:tag" content="一个简单的博客网站。">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://silvora.com/img/404.jpg">
+
+    <meta name="keywords" content="一个简单的博客网站。">
+
+
+<title >对immutable的理解？</title>
+
+<!-- Favicon -->
+
+    <link href='/img/favicon.svg?v=2.0.3' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/favicon.svg?v=2.0.3' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/locomotive-scroll@4.1.4/dist/locomotive-scroll.min.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"silvora.com","author":"Silvora","root":"/","typed_text":null,"theme_version":"2.0.3","theme":{"switch":true,"default":"style-light"},"favicon":{"logo":"/img/favicon.svg","icon16":"/img/favicon.svg","icon32":"/img/favicon.svg","appleTouchIcon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","showText":"(/≧▽≦/)咦！又好了！","hideText":"(●—●)喔哟，崩溃啦！"},"i18n":{"placeholder":"搜索...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","user_tag":"fas fa-user-alt","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":200},"search":{"enable":true,"type":"local","href":"https://www.google.com/search?q=site:","domain":null,"path":"search.xml"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2023-03-20 23:08:00"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.0.3" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+ 
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" data-scroll-container style="opacity: 0">
+          <div data-scroll-section id="content" class="trm-scroll-section">
+
+            <div class="locomotive-scroll__sticky-target" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none;"></div>
+
+            <!-- top bar -->
+            <header class="trm-top-bar" data-scroll data-scroll-sticky data-scroll-target=".locomotive-scroll__sticky-target" data-scroll-offset="-10">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            S<span>ilvora</span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a data-no-swup href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <div id="trm-search-btn" class="trm-search-btn">
+            <i class="iconfont fas fa-search"></i>
+        </div>
+        
+                
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner" data-scroll data-scroll-direction="vertical">
+    
+    <!-- banner cover -->
+    <img style="object-position:top;object-fit:cover;" alt="banner" class="trm-banner-cover" data-scroll data-scroll-direction="vertical" data-scroll-speed="-3" src="https://pic1.zhimg.com/v2-b3c2c6745b9421a13a3c4706b19223b3_r.jpg?source=1940ef5c">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container" data-scroll data-scroll-direction="vertical" data-scroll-speed="0">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            对immutable的理解？
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2023
+                                    </span
+                                ></li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <a href="#about-triger" data-scroll-to="#about-triger" data-scroll-offset="-130" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </a>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div id="page-sidebar" class="col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    
+
+<div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card" data-scroll data-scroll-repeat data-scroll-sticky data-scroll-target=".locomotive-scroll__sticky-target" data-scroll-offset="60"> 
+    
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.jpg">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Silvora
+    </h5>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/Silvora" title="github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github-square"></i>
+        </a>
+    
+        <a href="https://facebook.com" title="facebook" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-facebook"></i>
+        </a>
+    
+        <a href="https://google.com" title="google" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-google-plus-square"></i>
+        </a>
+    
+        <a href="https://tumblr.com" title="tumblr" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-tumblr-square"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                前端:
+            </div>
+            <div class="trm-label trm-label-light">
+                Vue/React
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                后端:
+            </div>
+            <div class="trm-label trm-label-light">
+                Node/GO
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                其它:
+            </div>
+            <div class="trm-label trm-label-light">
+                Flutter
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    <div class="trm-divider trm-mb-40 trm-mt-40"></div>
+    <!-- action button -->
+    <div class="text-center">
+        <a href="mailto:757909414@qq.com" class="trm-btn">
+            联系我
+            <i class="iconfont far fa-envelope"></i>
+        </a>
+    </div>
+    <!-- action button end -->
+
+    
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div id="page-content" class="col-lg-8">
+                <div class="trm-content" id="trm-content">
+                    <div data-scroll data-scroll-repeat data-scroll-offset="500" id="about-triger"></div>
+
+                    <div id="post-info" class="row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            02/16
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            23:09
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Silvora
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <h1 id="面试官：说说你对immutable的理解？如何应用在react项目中？"><a href="#面试官：说说你对immutable的理解？如何应用在react项目中？" class="headerlink" title="面试官：说说你对immutable的理解？如何应用在react项目中？"></a>面试官：说说你对immutable的理解？如何应用在react项目中？</h1><p> <img src="https://static.vue-js.com/797e9470-ea3f-11eb-ab90-d9ae814b240d.png" loading="lazy" onerror='this.onerror=null;this.src="/img/404.jpg"'></p>
+<h2 id="一、是什么"><a href="#一、是什么" class="headerlink" title="一、是什么"></a>一、是什么</h2><p>Immutable，不可改变的，在计算机中，即指一旦创建，就不能再被更改的数据</p>
+<p>对 <code>Immutable </code>对象的任何修改或添加删除操作都会返回一个新的 <code>Immutable </code>对象</p>
+<p><code>Immutable</code> 实现的原理是 <code>Persistent Data Structure</code>（持久化数据结构）:</p>
+<ul>
+<li>用一种数据结构来保存数据</li>
+<li>当数据被修改时，会返回一个对象，但是新的对象会尽可能的利用之前的数据结构而不会对内存造成浪费</li>
+</ul>
+<p>也就是使用旧数据创建新数据时，要保证旧数据同时可用且不变，同时为了避免 <code>deepCopy </code>把所有节点都复制一遍带来的性能损耗，<code>Immutable</code> 使用了 <code>Structural Sharing</code>（结构共享）</p>
+<p>如果对象树中一个节点发生变化，只修改这个节点和受它影响的父节点，其它节点则进行共享</p>
+<p>如下图所示：</p>
+<p><img src="https://pic4.zhimg.com/80/2b4c801a7b40eefcd4ee6767fb984fdf_720w.gif" loading="lazy" onerror='this.onerror=null;this.src="/img/404.jpg"'></p>
+<h2 id="二、如何使用"><a href="#二、如何使用" class="headerlink" title="二、如何使用"></a>二、如何使用</h2><p>使用<code>Immutable</code>对象最主要的库是<code>immutable.js</code></p>
+<p>immutable.js 是一个完全独立的库，无论基于什么框架都可以用它</p>
+<p>其出现场景在于弥补 Javascript 没有不可变数据结构的问题，通过 structural sharing来解决的性能问题</p>
+<p>内部提供了一套完整的 Persistent Data Structure，还有很多易用的数据类型，如<code>Collection</code>、<code>List</code>、<code>Map</code>、<code>Set</code>、<code>Record</code>、<code>Seq</code>，其中：</p>
+<ul>
+<li><p>List: 有序索引集，类似 JavaScript 中的 Array</p>
+</li>
+<li><p>Map: 无序索引集，类似 JavaScript 中的 Object</p>
+</li>
+<li><p>Set: 没有重复值的集合</p>
+</li>
+</ul>
+<p>主要的方法如下：</p>
+<ul>
+<li>fromJS()：将一个js数据转换为Immutable类型的数据</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> obj = <span class="title class_">Immutable</span>.<span class="title function_">fromJS</span>(&#123;<span class="attr">a</span>:<span class="string">&#x27;123&#x27;</span>,<span class="attr">b</span>:<span class="string">&#x27;234&#x27;</span>&#125;)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>toJS()：将一个Immutable数据转换为JS类型的数据</li>
+<li>is()：对两个对象进行比较</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; <span class="title class_">Map</span>, is &#125; <span class="keyword">from</span> <span class="string">&#x27;immutable&#x27;</span></span><br><span class="line"><span class="keyword">const</span> map1 = <span class="title class_">Map</span>(&#123; <span class="attr">a</span>: <span class="number">1</span>, <span class="attr">b</span>: <span class="number">1</span>, <span class="attr">c</span>: <span class="number">1</span> &#125;)</span><br><span class="line"><span class="keyword">const</span> map2 = <span class="title class_">Map</span>(&#123; <span class="attr">a</span>: <span class="number">1</span>, <span class="attr">b</span>: <span class="number">1</span>, <span class="attr">c</span>: <span class="number">1</span> &#125;)</span><br><span class="line">map1 === map2   <span class="comment">//false</span></span><br><span class="line"><span class="title class_">Object</span>.<span class="title function_">is</span>(map1, map2) <span class="comment">// false</span></span><br><span class="line"><span class="title function_">is</span>(map1, map2) <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>get(key)：对数据或对象取值</p>
+</li>
+<li><p>getIn([]) ：对嵌套对象或数组取值，传参为数组，表示位置</p>
+</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> abs = <span class="title class_">Immutable</span>.<span class="title function_">fromJS</span>(&#123;<span class="attr">a</span>: &#123;<span class="attr">b</span>:<span class="number">2</span>&#125;&#125;);</span><br><span class="line">abs.<span class="title function_">getIn</span>([<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>]) <span class="comment">// 2</span></span><br><span class="line">abs.<span class="title function_">getIn</span>([<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;c&#x27;</span>]) <span class="comment">// 子级没有值</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> arr = <span class="title class_">Immutable</span>.<span class="title function_">fromJS</span>([<span class="number">1</span> ,<span class="number">2</span>, <span class="number">3</span>, &#123;<span class="attr">a</span>: <span class="number">5</span>&#125;]);</span><br><span class="line">arr.<span class="title function_">getIn</span>([<span class="number">3</span>, <span class="string">&#x27;a&#x27;</span>]); <span class="comment">// 5</span></span><br><span class="line">arr.<span class="title function_">getIn</span>([<span class="number">3</span>, <span class="string">&#x27;c&#x27;</span>]); <span class="comment">// 子级没有值</span></span><br></pre></td></tr></table></figure>
+
+<p>- </p>
+<p>如下例子：使用方法如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">Immutable</span> <span class="keyword">from</span> <span class="string">&#x27;immutable&#x27;</span>;</span><br><span class="line">foo = <span class="title class_">Immutable</span>.<span class="title function_">fromJS</span>(&#123;<span class="attr">a</span>: &#123;<span class="attr">b</span>: <span class="number">1</span>&#125;&#125;);</span><br><span class="line">bar = foo.<span class="title function_">setIn</span>([<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>], <span class="number">2</span>);   <span class="comment">// 使用 setIn 赋值</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(foo.<span class="title function_">getIn</span>([<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>]));  <span class="comment">// 使用 getIn 取值，打印 1</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(foo === bar);  <span class="comment">//  打印 false</span></span><br></pre></td></tr></table></figure>
+
+<p>如果换到原生的<code>js</code>，则对应如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> foo = &#123;<span class="attr">a</span>: &#123;<span class="attr">b</span>: <span class="number">1</span>&#125;&#125;;</span><br><span class="line"><span class="keyword">let</span> bar = foo;</span><br><span class="line">bar.<span class="property">a</span>.<span class="property">b</span> = <span class="number">2</span>;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(foo.<span class="property">a</span>.<span class="property">b</span>);  <span class="comment">// 打印 2</span></span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(foo === bar);  <span class="comment">//  打印 true</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="三、在React中应用"><a href="#三、在React中应用" class="headerlink" title="三、在React中应用"></a>三、在React中应用</h2><p>使用 <code>Immutable </code>可以给 <code>React</code> 应用带来性能的优化，主要体现在减少渲染的次数</p>
+<p>在做<code>react</code>性能优化的时候，为了避免重复渲染，我们会在<code>shouldComponentUpdate()</code>中做对比，当返回<code>true</code>执行<code>render</code>方法</p>
+<p><code>Immutable</code>通过<code>is</code>方法则可以完成对比，而无需像一样通过深度比较的方式比较</p>
+<p>在使用<code>redux</code>过程中也可以结合<code>Immutable</code>，不使用<code>Immutable</code>前修改一个数据需要做一个深拷贝</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&#x27;_&#x27;</span> <span class="keyword">from</span> <span class="string">&#x27;lodash&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title class_">Component</span> = <span class="title class_">React</span>.<span class="title function_">createClass</span>(&#123;</span><br><span class="line">  <span class="title function_">getInitialState</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">      <span class="attr">data</span>: &#123; <span class="attr">times</span>: <span class="number">0</span> &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="title function_">handleAdd</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">let</span> data = _.<span class="title function_">cloneDeep</span>(<span class="variable language_">this</span>.<span class="property">state</span>.<span class="property">data</span>);</span><br><span class="line">    data.<span class="property">times</span> = data.<span class="property">times</span> + <span class="number">1</span>;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="title function_">setState</span>(&#123; <span class="attr">data</span>: data &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用 Immutable 后：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">getInitialState</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> &#123;</span><br><span class="line">    <span class="attr">data</span>: <span class="title class_">Map</span>(&#123; <span class="attr">times</span>: <span class="number">0</span> &#125;)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;,</span><br><span class="line">  <span class="title function_">handleAdd</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="variable language_">this</span>.<span class="title function_">setState</span>(&#123; <span class="attr">data</span>: <span class="variable language_">this</span>.<span class="property">state</span>.<span class="property">data</span>.<span class="title function_">update</span>(<span class="string">&#x27;times&#x27;</span>, <span class="function"><span class="params">v</span> =&gt;</span> v + <span class="number">1</span>) &#125;);</span><br><span class="line">    <span class="comment">// 这时的 times 并不会改变</span></span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">this</span>.<span class="property">state</span>.<span class="property">data</span>.<span class="title function_">get</span>(<span class="string">&#x27;times&#x27;</span>));</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>同理，在<code>redux</code>中也可以将数据进行<code>fromJS</code>处理</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> constants <span class="keyword">from</span> <span class="string">&#x27;./constants&#x27;</span></span><br><span class="line"><span class="keyword">import</span> &#123;fromJS&#125; <span class="keyword">from</span> <span class="string">&#x27;immutable&#x27;</span></span><br><span class="line"><span class="keyword">const</span> defaultState = <span class="title function_">fromJS</span>(&#123; <span class="comment">//将数据转化成immutable数据</span></span><br><span class="line">    <span class="attr">home</span>:<span class="literal">true</span>,</span><br><span class="line">    <span class="attr">focused</span>:<span class="literal">false</span>,</span><br><span class="line">    <span class="attr">mouseIn</span>:<span class="literal">false</span>,</span><br><span class="line">    <span class="attr">list</span>:[],</span><br><span class="line">    <span class="attr">page</span>:<span class="number">1</span>,</span><br><span class="line">    <span class="attr">totalPage</span>:<span class="number">1</span></span><br><span class="line">&#125;)</span><br><span class="line"><span class="keyword">export</span> <span class="title function_">default</span>(state=defaultState,action)=&gt;&#123;</span><br><span class="line">    <span class="keyword">switch</span>(action.<span class="property">type</span>)&#123;</span><br><span class="line">        <span class="keyword">case</span> constants.<span class="property">SEARCH_FOCUS</span>:</span><br><span class="line">            <span class="keyword">return</span> state.<span class="title function_">set</span>(<span class="string">&#x27;focused&#x27;</span>,<span class="literal">true</span>) <span class="comment">//更改immutable数据</span></span><br><span class="line">        <span class="keyword">case</span> constants.<span class="property">CHANGE_HOME_ACTIVE</span>:</span><br><span class="line">            <span class="keyword">return</span> state.<span class="title function_">set</span>(<span class="string">&#x27;home&#x27;</span>,action.<span class="property">value</span>)</span><br><span class="line">        <span class="keyword">case</span> constants.<span class="property">SEARCH_BLUR</span>:</span><br><span class="line">            <span class="keyword">return</span> state.<span class="title function_">set</span>(<span class="string">&#x27;focused&#x27;</span>,<span class="literal">false</span>)</span><br><span class="line">        <span class="keyword">case</span> constants.<span class="property">CHANGE_LIST</span>:</span><br><span class="line">            <span class="comment">// return state.set(&#x27;list&#x27;,action.data).set(&#x27;totalPage&#x27;,action.totalPage)</span></span><br><span class="line">            <span class="comment">//merge效率更高，执行一次改变多个数据</span></span><br><span class="line">            <span class="keyword">return</span> state.<span class="title function_">merge</span>(&#123;</span><br><span class="line">                <span class="attr">list</span>:action.<span class="property">data</span>,</span><br><span class="line">                <span class="attr">totalPage</span>:action.<span class="property">totalPage</span></span><br><span class="line">            &#125;)</span><br><span class="line">        <span class="keyword">case</span> constants.<span class="property">MOUSE_ENTER</span>:</span><br><span class="line">            <span class="keyword">return</span> state.<span class="title function_">set</span>(<span class="string">&#x27;mouseIn&#x27;</span>,<span class="literal">true</span>)</span><br><span class="line">        <span class="keyword">case</span> constants.<span class="property">MOUSE_LEAVE</span>:</span><br><span class="line">            <span class="keyword">return</span> state.<span class="title function_">set</span>(<span class="string">&#x27;mouseIn&#x27;</span>,<span class="literal">false</span>)</span><br><span class="line">        <span class="keyword">case</span> constants.<span class="property">CHANGE_PAGE</span>:</span><br><span class="line">            <span class="keyword">return</span> state.<span class="title function_">set</span>(<span class="string">&#x27;page&#x27;</span>,action.<span class="property">page</span>)</span><br><span class="line">        <span class="attr">default</span>:</span><br><span class="line">            <span class="keyword">return</span> state</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/20295971?spm=a2c4e.11153940.blogcont69516.18.4f275a00EzBHjr&columnSlug=purerender">https://zhuanlan.zhihu.com/p/20295971?spm=a2c4e.11153940.blogcont69516.18.4f275a00EzBHjr&amp;columnSlug=purerender</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/7bf04638e82a">https://www.jianshu.com/p/7bf04638e82a</a></li>
+</ul>
+
+</article>
+    
+    
+</div>
+<div id="post-next-prev" class="row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation" data-scroll data-scroll-offset="40">
+        <a href="/2023/02/16/React/how%20to%20use%20redux/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/block.jpg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/React/">
+                    React
+                </a>
+            </div>
+            <h5>
+                <a href="/2023/02/16/React/how%20to%20use%20redux/" class="trm-anima-link">
+                    React项目中是如何使用Redux的?
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>23/02/16</li>
+                <li>23:09</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation" data-scroll data-scroll-offset="40">
+        <a href="/2023/02/16/React/import%20css/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/block.jpg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/React/">
+                    React
+                </a>
+            </div>
+            <h5>
+                <a href="/2023/02/16/React/import%20css/" class="trm-anima-link">
+                    react中引入css的方式有哪几种？
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>23/02/16</li>
+                <li>23:09</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-scroll-animation" data-scroll data-scroll-offset="50">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2023- 2023</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Silvora</span>
+        </div>
+    
+
+      
+
+     
+
+     
+</footer>
+ 
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            <div class="trm-fixed-container" data-scroll data-scroll-sticky data-scroll-target=".locomotive-scroll__sticky-target" data-scroll-offset="-10">
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+          </div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+
+  </div>
+  <!-- app wrapper end -->
+
+  
+<div class="trm-search-popup">
+    <div class="trm-search-header">
+        <span class="trm-search-popup-btn-close">
+            <i class="iconfont fas fa-times"></i>
+        </span>
+    </div>
+    <div class="form trm-search-form">
+        <input class="trm-search-input" type="text" placeholder="搜索...">
+    </div>
+    <div class="trm-search-result-container">
+
+    </div>
+</div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/locomotive-scroll@4.1.4/dist/locomotive-scroll.min.js"></script>
+
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+
+    
+        
+<script src="https://unpkg.com/hexo-generator-searchdb@1.4.0/dist/search.js"></script>
+
+        <script src="/js/plugins/local_search.js?v=2.0.3"></script>
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+    <script data-swup-reload-script>
+        (function () {
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+
+
+
+<script id="async-script" src="/js/main.js?v=2.0.3"></script>
+
+</body>
+
+</html>

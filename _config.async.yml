@@ -63,12 +63,20 @@ highlight:
   height_limit: 200 # 超出时，显示折叠按钮
 
 
+search:
+  enable: true
+  type: local
+
+baidu_push: true
+
+
 
 categorie_card:
   enable: true
   len: 2
   #list: ['Vue','React','Node','Go','App']
   list: ['Vue','React']
+
 
 
 
