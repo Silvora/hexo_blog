@@ -1,5 +1,5 @@
 ---
-title: mobx
+title: Mobx的基本使用
 date: 2023-03-23 17:53:57
 categories: 
 - Frames

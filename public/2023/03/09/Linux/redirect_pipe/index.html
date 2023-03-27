@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="面试官：说说你对输入输出重定向和管道的理解？应用场景？  一、是什么linux中有三种标准输入输出，分别是STDIN，STDOUT，STDERR，对应的数字是0、1、2：  STDIN 是标准输入，默认从键盘读取信息 STDOUT 是标准输出，默认将输出结果输出至终端 STDERR 是标准错误，默认将输出结果输出至终端  对于任何linux命令的执行会有下面的过程：   一条命令的执行需要键盘等的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="输入输出重定向和管道的理解？">
+<meta property="og:url" content="http://silvora.com/2023/03/09/Linux/redirect_pipe/index.html">
+<meta property="og:site_name" content="Silvora的个人博客">
+<meta property="og:description" content="面试官：说说你对输入输出重定向和管道的理解？应用场景？  一、是什么linux中有三种标准输入输出，分别是STDIN，STDOUT，STDERR，对应的数字是0、1、2：  STDIN 是标准输入，默认从键盘读取信息 STDOUT 是标准输出，默认将输出结果输出至终端 STDERR 是标准错误，默认将输出结果输出至终端  对于任何linux命令的执行会有下面的过程：   一条命令的执行需要键盘等的">
+<meta property="og:locale">
+<meta property="og:image" content="http://silvora.com/img/404.jpg">
+<meta property="og:image" content="http://silvora.com/img/404.jpg">
+<meta property="article:published_time" content="2023-03-09T01:24:54.000Z">
+<meta property="article:modified_time" content="2023-03-20T14:42:02.091Z">
+<meta property="article:author" content="Silvora">
+<meta property="article:tag" content="一个简单的博客网站。">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://silvora.com/img/404.jpg">
+
+    <meta name="keywords" content="一个简单的博客网站。">
+
+
+<title >输入输出重定向和管道的理解？</title>
+
+<!-- Favicon -->
+
+    <link href='/img/favicon.svg?v=2.0.3' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/favicon.svg?v=2.0.3' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/locomotive-scroll@4.1.4/dist/locomotive-scroll.min.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"silvora.com","author":"Silvora","root":"/","typed_text":null,"theme_version":"2.0.3","theme":{"switch":true,"default":"style-light"},"favicon":{"logo":"/img/favicon.svg","icon16":"/img/favicon.svg","icon32":"/img/favicon.svg","appleTouchIcon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","showText":"(/≧▽≦/)咦！又好了！","hideText":"(●—●)喔哟，崩溃啦！"},"i18n":{"placeholder":"搜索...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","user_tag":"fas fa-user-alt","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":200},"search":{"enable":true,"type":"local","href":"https://www.google.com/search?q=site:","domain":null,"path":"search.xml"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2023-03-20 22:42:02"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.0.3" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+ 
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" data-scroll-container style="opacity: 0">
+          <div data-scroll-section id="content" class="trm-scroll-section">
+
+            <div class="locomotive-scroll__sticky-target" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none;"></div>
+
+            <!-- top bar -->
+            <header class="trm-top-bar" data-scroll data-scroll-sticky data-scroll-target=".locomotive-scroll__sticky-target" data-scroll-offset="-10">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            S<span>ilvora</span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a data-no-swup href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <div id="trm-search-btn" class="trm-search-btn">
+            <i class="iconfont fas fa-search"></i>
+        </div>
+        
+                
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner" data-scroll data-scroll-direction="vertical">
+    
+    <!-- banner cover -->
+    <img style="object-position:top;object-fit:cover;" alt="banner" class="trm-banner-cover" data-scroll data-scroll-direction="vertical" data-scroll-speed="-3" src="https://pic1.zhimg.com/v2-b3c2c6745b9421a13a3c4706b19223b3_r.jpg?source=1940ef5c">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container" data-scroll data-scroll-direction="vertical" data-scroll-speed="0">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            输入输出重定向和管道的理解？
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2023
+                                    </span
+                                ></li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <a href="#about-triger" data-scroll-to="#about-triger" data-scroll-offset="-130" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </a>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div id="page-sidebar" class="col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    
+
+<div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card" data-scroll data-scroll-repeat data-scroll-sticky data-scroll-target=".locomotive-scroll__sticky-target" data-scroll-offset="60"> 
+    
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.jpg">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Silvora
+    </h5>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/Silvora" title="github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github-square"></i>
+        </a>
+    
+        <a href="https://facebook.com" title="facebook" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-facebook"></i>
+        </a>
+    
+        <a href="https://google.com" title="google" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-google-plus-square"></i>
+        </a>
+    
+        <a href="https://tumblr.com" title="tumblr" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-tumblr-square"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                前端:
+            </div>
+            <div class="trm-label trm-label-light">
+                Vue/React
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                后端:
+            </div>
+            <div class="trm-label trm-label-light">
+                Node/GO
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                其它:
+            </div>
+            <div class="trm-label trm-label-light">
+                Flutter
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    <div class="trm-divider trm-mb-40 trm-mt-40"></div>
+    <!-- action button -->
+    <div class="text-center">
+        <a href="mailto:757909414@qq.com" class="trm-btn">
+            联系我
+            <i class="iconfont far fa-envelope"></i>
+        </a>
+    </div>
+    <!-- action button end -->
+
+    
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div id="page-content" class="col-lg-8">
+                <div class="trm-content" id="trm-content">
+                    <div data-scroll data-scroll-repeat data-scroll-offset="500" id="about-triger"></div>
+
+                    <div id="post-info" class="row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            03/09
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            09:24
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Silvora
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <h1 id="面试官：说说你对输入输出重定向和管道的理解？应用场景？"><a href="#面试官：说说你对输入输出重定向和管道的理解？应用场景？" class="headerlink" title="面试官：说说你对输入输出重定向和管道的理解？应用场景？"></a>面试官：说说你对输入输出重定向和管道的理解？应用场景？</h1><p> <img src="https://static.vue-js.com/1036dde0-0634-11ec-a752-75723a64e8f5.png" loading="lazy" onerror='this.onerror=null;this.src="/img/404.jpg"'></p>
+<h2 id="一、是什么"><a href="#一、是什么" class="headerlink" title="一、是什么"></a>一、是什么</h2><p><code>linux</code>中有三种标准输入输出，分别是<code>STDIN</code>，<code>STDOUT</code>，<code>STDERR</code>，对应的数字是0、1、2：</p>
+<ul>
+<li>STDIN 是标准输入，默认从键盘读取信息</li>
+<li>STDOUT 是标准输出，默认将输出结果输出至终端</li>
+<li>STDERR 是标准错误，默认将输出结果输出至终端</li>
+</ul>
+<p>对于任何<code>linux</code>命令的执行会有下面的过程：</p>
+<p> <img src="https://static.vue-js.com/1a57caf0-0634-11ec-8e64-91fdec0f05a1.png" loading="lazy" onerror='this.onerror=null;this.src="/img/404.jpg"'></p>
+<p>一条命令的执行需要键盘等的标准输入，命令的执行和正确或错误，其中的每一个双向箭头就是一个通道，所以数据流可以流入到文件端（<strong>重定向或管道</strong>）</p>
+<p>简单来讲，重定向就是把本来要显示在终端的命令结果，输送到别的地方，分成：</p>
+<ul>
+<li>输入重定向：流出到屏幕如果命令所需的输入不是来自键盘，而是来自指定的文件</li>
+<li>输出重定向：命令的输出可以不显示在屏幕，而是写在指定的文件中</li>
+</ul>
+<p>管道就是把两个命令连接起来使用，一个命令的输出作为另一个命令的输入</p>
+<p>两者的区别在于：</p>
+<ul>
+<li>管道触发两个子进程，执行 | 两边的程序；而重定向是在一个进程内执行。</li>
+<li>管道两边都是shell命令</li>
+<li>重定向符号的右边只能是Linux文件</li>
+<li>重定向符号的优先级大于管道</li>
+</ul>
+<h2 id="二、命令"><a href="#二、命令" class="headerlink" title="二、命令"></a>二、命令</h2><p>重定向常见的命令符号有：</p>
+<ul>
+<li>&gt; ： 输出重定向到一个文件或设备 覆盖原来的文件</li>
+</ul>
+<blockquote>
+<p>如果该文件不存在，则新建一个文件</p>
+<p>如果该文件已经存在，会把文件内容覆盖</p>
+<p>这些操纵不会征用用户的确认</p>
+</blockquote>
+<ul>
+<li>&gt;&gt; ：输出重定向到一个文件或设备，但是是 追加原来的文件的末尾</li>
+<li>&lt;  ：用于制定命令的输入</li>
+<li>&lt;&lt; ：从键盘的输入重定向为某个命令的输入</li>
+</ul>
+<blockquote>
+<p>以逐行输入的模式（回车键进行换行）</p>
+<p>所有输入的行都将在输入结束字符串之后发送给命令</p>
+</blockquote>
+<ul>
+<li>2&gt; 将一个标准错误输出重定向到一个文件或设备，会覆盖原来的文件</li>
+<li>2&gt;&gt; 将一个标准错误输出重定向到一个文件或设备，是追加到原来的文件</li>
+<li>2&gt;&amp;1：组合符号，将标准错误输出重定向到标准输出相同的地方</li>
+</ul>
+<blockquote>
+<p>1就是代表标准输出</p>
+</blockquote>
+<ul>
+<li>&gt;&amp; 将一个标准错误输出重定向到一个文件或设备覆盖原来的文件</li>
+<li>|&amp; 将一个标准错误管道输出到另一个命令作为输入</li>
+</ul>
+<h2 id="三、应用场景"><a href="#三、应用场景" class="headerlink" title="三、应用场景"></a>三、应用场景</h2><p>将当前目录的文件输出重定向到<code>1.txt</code>文件中，并且会清空原有的<code>1.txt</code>的内容</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -a &gt; <span class="number">1</span>.txt</span><br></pre></td></tr></table></figure>
+
+<p>或者以追加的形式，重定向输入到<code>1.txt</code>中</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ls -a &gt;&gt; <span class="number">1</span>.txt</span><br></pre></td></tr></table></figure>
+
+<p>将标准错误输出到某个文件，可以如下：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ touch <span class="number">2</span>&gt; <span class="number">2</span>.txt</span><br><span class="line">$ cat <span class="number">2</span>.txt</span><br><span class="line"><span class="function">touch: 缺少了文件操作数</span></span><br><span class="line"><span class="function">请尝试执行 &quot;<span class="title">touch</span> --<span class="title">help</span>&quot; 来获取更多信息。</span></span><br></pre></td></tr></table></figure>
+
+<p>通过组合符号将两者结合一起，无论进程输出的信息是正确还是错误的信息，都会重定向到指定的文件里</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@linguanghui home]# abc &amp;&gt; file.txt</span><br><span class="line">[root@linguanghui home]# cat file.txt </span><br><span class="line">-bash: abc: command <span class="keyword">not</span> found</span><br></pre></td></tr></table></figure>
+
+<p>再者通过管道查询文件内容是否包含想要的信息：</p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat test.txt | grep -n &#x27;xxx&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>上述<code>cat test.txt</code>会将<code>test.txt</code>的内容作为标准输出，然后利用管道，将其作为<code>grep -n &#39;xxx&#39;</code>命令的标准输入。</p>
+<h3 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h3><ul>
+<li><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000020519335">https://segmentfault.com/a/1190000020519335</a></li>
+<li><a target="_blank" rel="noopener" href="https://murphypei.github.io/blog/2018/04/linux-redirect-pipe">https://murphypei.github.io/blog/2018/04/linux-redirect-pipe</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.huaweicloud.com/articles/0fb70e8c724ae79f4fc8d676cd6160d3.html">https://www.huaweicloud.com/articles/0fb70e8c724ae79f4fc8d676cd6160d3.html</a></li>
+</ul>
+
+</article>
+    
+    
+</div>
+<div id="post-next-prev" class="row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation" data-scroll data-scroll-offset="40">
+        <a href="/2023/03/09/Linux/linux/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/block.jpg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/Linux/">
+                    Linux
+                </a>
+            </div>
+            <h5>
+                <a href="/2023/03/09/Linux/linux/" class="trm-anima-link">
+                    操作系统的理解？
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>23/03/09</li>
+                <li>09:24</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation" data-scroll data-scroll-offset="40">
+        <a href="/2023/03/09/Linux/shell/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/block.jpg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/Linux/">
+                    Linux
+                </a>
+            </div>
+            <h5>
+                <a href="/2023/03/09/Linux/shell/" class="trm-anima-link">
+                    shell 的理解？
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>23/03/09</li>
+                <li>09:24</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-scroll-animation" data-scroll data-scroll-offset="50">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2023- 2023</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Silvora</span>
+        </div>
+    
+
+      
+
+     
+
+     
+</footer>
+ 
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            <div class="trm-fixed-container" data-scroll data-scroll-sticky data-scroll-target=".locomotive-scroll__sticky-target" data-scroll-offset="-10">
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+          </div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+
+  </div>
+  <!-- app wrapper end -->
+
+  
+<div class="trm-search-popup">
+    <div class="trm-search-header">
+        <span class="trm-search-popup-btn-close">
+            <i class="iconfont fas fa-times"></i>
+        </span>
+    </div>
+    <div class="form trm-search-form">
+        <input class="trm-search-input" type="text" placeholder="搜索...">
+    </div>
+    <div class="trm-search-result-container">
+
+    </div>
+</div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/locomotive-scroll@4.1.4/dist/locomotive-scroll.min.js"></script>
+
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+
+    
+        
+<script src="https://unpkg.com/hexo-generator-searchdb@1.4.0/dist/search.js"></script>
+
+        <script src="/js/plugins/local_search.js?v=2.0.3"></script>
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+    <script data-swup-reload-script>
+        (function () {
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+
+
+
+<script id="async-script" src="/js/main.js?v=2.0.3"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="x5-fullscreen" content="true">
+<meta name="full-screen" content="yes">
+<meta name="theme-color" content="#317EFB" />
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=0" name="viewport">
+<meta name="description" content="面试官：说说你对冒泡排序的理解？如何实现？应用场景？  一、是什么冒泡排序（Bubble Sort），是一种计算机科学领域的较简单的排序算法 冒泡排序的思想就是在每次遍历一遍未排序的数列之后，将一个数据元素浮上去（也就是排好了一个数据） 如同碳酸饮料中二氧化碳的气泡最终会上浮到顶端一样，故名“冒泡排序” 假如我们要把 12、35、99、18、76 这 5 个数从大到小进行排序，那么数越大，越需要把">
+<meta property="og:type" content="article">
+<meta property="og:title" content="冒泡排序的理解？">
+<meta property="og:url" content="http://silvora.com/2023/01/21/Algorithm/bubbleSort/index.html">
+<meta property="og:site_name" content="Silvora的个人博客">
+<meta property="og:description" content="面试官：说说你对冒泡排序的理解？如何实现？应用场景？  一、是什么冒泡排序（Bubble Sort），是一种计算机科学领域的较简单的排序算法 冒泡排序的思想就是在每次遍历一遍未排序的数列之后，将一个数据元素浮上去（也就是排好了一个数据） 如同碳酸饮料中二氧化碳的气泡最终会上浮到顶端一样，故名“冒泡排序” 假如我们要把 12、35、99、18、76 这 5 个数从大到小进行排序，那么数越大，越需要把">
+<meta property="og:locale">
+<meta property="og:image" content="http://silvora.com/img/404.jpg">
+<meta property="og:image" content="http://silvora.com/img/404.jpg">
+<meta property="og:image" content="http://silvora.com/img/404.jpg">
+<meta property="og:image" content="http://silvora.com/img/404.jpg">
+<meta property="article:published_time" content="2023-01-21T08:24:45.000Z">
+<meta property="article:modified_time" content="2023-03-20T14:09:22.724Z">
+<meta property="article:author" content="Silvora">
+<meta property="article:tag" content="一个简单的博客网站。">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://silvora.com/img/404.jpg">
+
+    <meta name="keywords" content="一个简单的博客网站。">
+
+
+<title >冒泡排序的理解？</title>
+
+<!-- Favicon -->
+
+    <link href='/img/favicon.svg?v=2.0.3' rel='icon' type='image/png' sizes='16x16' ></link>
+
+
+    <link href='/img/favicon.svg?v=2.0.3' rel='icon' type='image/png' sizes='32x32' ></link>
+
+
+
+
+<!-- Plugin -->
+
+
+
+
+    
+<link rel="stylesheet" href="/css/plugins/bootstrap.row.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/locomotive-scroll@4.1.4/dist/locomotive-scroll.min.css">
+
+    
+<link rel="stylesheet" href="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.css">
+
+    
+    
+
+
+
+
+<!-- Icon -->
+
+    
+<link rel="stylesheet" href="/css/plugins/font-awesome.min.css">
+
+
+
+
+<!-- Variable -->
+<script>window.ASYNC_CONFIG = {"hostname":"silvora.com","author":"Silvora","root":"/","typed_text":null,"theme_version":"2.0.3","theme":{"switch":true,"default":"style-light"},"favicon":{"logo":"/img/favicon.svg","icon16":"/img/favicon.svg","icon32":"/img/favicon.svg","appleTouchIcon":null,"webmanifest":null,"visibilitychange":false,"hidden":"/failure.ico","showText":"(/≧▽≦/)咦！又好了！","hideText":"(●—●)喔哟，崩溃啦！"},"i18n":{"placeholder":"搜索...","empty":"找不到您查询的内容: ${query}","hits":"找到 ${hits} 条结果","hits_time":"找到 ${hits} 条结果（用时 ${time} 毫秒）","author":"本文作者：","copyright_link":"本文链接：","copyright_license_title":"版权声明：","copyright_license_content":"本博客所有文章除特别声明外，均默认采用 undefined 许可协议。","copy_success":"复制成功","copy_failure":"复制失败","open_read_mode":"进入阅读模式","exit_read_mode":"退出阅读模式","notice_outdate_message":"距离上次更新已经 undefined 天了, 文章内容可能已经过时。","just":"刚刚","min":"分钟前","hour":"小时前","day":"天前","month":"个月前"},"swup":false,"plugin":{"flickr_justified_gallery":"https://unpkg.com/flickr-justified-gallery@latest/dist/fjGallery.min.js"},"icons":{"sun":"far fa-sun","moon":"far fa-moon","play":"fas fa-play","email":"far fa-envelope","next":"fas fa-arrow-right","calendar":"far fa-calendar-alt","clock":"far fa-clock","user":"far fa-user","back_top":"fas fa-arrow-up","close":"fas fa-times","search":"fas fa-search","reward":"fas fa-hand-holding-usd","user_tag":"fas fa-user-alt","toc_tag":"fas fa-th-list","read":"fas fa-book-reader","arrows":"fas fa-arrows-alt-h","double_arrows":"fas fa-angle-double-down","copy":"fas fa-copy"},"icontype":"font","highlight":{"plugin":"highlighjs","theme":true,"copy":true,"lang":true,"title":"default","height_limit":200},"search":{"enable":true,"type":"local","href":"https://www.google.com/search?q=site:","domain":null,"path":"search.xml"}};</script>
+<script id="async-page-config">window.PAGE_CONFIG = {"isPost":true,"isHome":false,"postUpdate":"2023-03-20 22:09:22"};</script>
+
+<!-- Theme mode css -->
+<link data-swup-theme rel="stylesheet" href="/css/index.css?v=2.0.3" id="trm-switch-style">
+<script>
+    let defaultMode = ASYNC_CONFIG.theme.default !=='auto' ?  ASYNC_CONFIG.theme.default : (window.matchMedia("(prefers-color-scheme: light)").matches ? 'style-light' : 'style-dark')
+    let catchMode = localStorage.getItem('theme-mode') || defaultMode;
+    let type = catchMode === 'style-dark' ? 'add' : 'remove';
+    document.documentElement.classList[type]('dark')
+</script>
+
+<!-- CDN -->
+
+
+    
+    
+
+
+
+<!-- Site Analytics -->
+ 
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+
+  <!-- app wrapper -->
+  <div class="trm-app-frame">
+
+    <!-- page preloader -->
+    <div class="trm-preloader">
+    <div class="trm-holder">
+        <div class="preloader">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+</div>
+    <!-- page preloader end -->
+
+    <!-- change mode preloader -->
+    <div class="trm-mode-swich-animation-frame">
+    <div class="trm-mode-swich-animation">
+        <i class="i-sun"><i class="iconfont far fa-sun"></i></i>
+        <div class="trm-horizon"></div>
+        <i class="i-moon"><i class="iconfont far fa-moon"></i></i>
+    </div>
+</div>
+    <!-- change mode preloader end -->
+
+      <!-- scroll container -->
+      <div id="trm-dynamic-content" class="trm-swup-animation">
+        <div id="trm-scroll-container" class="trm-scroll-container" data-scroll-container style="opacity: 0">
+          <div data-scroll-section id="content" class="trm-scroll-section">
+
+            <div class="locomotive-scroll__sticky-target" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none;"></div>
+
+            <!-- top bar -->
+            <header class="trm-top-bar" data-scroll data-scroll-sticky data-scroll-target=".locomotive-scroll__sticky-target" data-scroll-offset="-10">
+	<div class="container">
+		<div class="trm-left-side">
+			<!-- logo -->
+<a href="/" class="trm-logo-frame trm-anima-link">
+    
+        <img alt="logo" src="/img/favicon.svg">
+    
+    
+        <div class="trm-logo-text">
+            S<span>ilvora</span>
+        </div>
+    
+</a>
+<!-- logo end -->
+		</div>
+		<div class="trm-right-side">
+			<!-- menu -->
+<div class="trm-menu">
+    <nav>
+        <ul>
+            
+            <li class="menu-item-has-children ">
+                <a  href="/" target="">
+                    首页
+                </a>
+                
+            </li>
+            
+            <li class="menu-item-has-children ">
+                <a data-no-swup href="/archives/" target="">
+                    归档
+                </a>
+                
+            </li>
+            
+        </ul>
+    </nav>
+</div>
+<!-- menu end -->
+			
+    <!-- mode switcher place -->
+    <div class="trm-mode-switcher-place">
+        <div class="trm-mode-switcher">
+            <i class="iconfont far fa-sun"></i>
+            <input class="tgl tgl-light" id="trm-swich" type="checkbox">
+            <label class="trm-swich" for="trm-swich"></label>
+            <i class="iconfont far fa-moon"></i>
+        </div>
+    </div>
+    <!-- mode switcher place end -->
+
+			
+    
+        <div id="trm-search-btn" class="trm-search-btn">
+            <i class="iconfont fas fa-search"></i>
+        </div>
+        
+                
+		</div>
+		<div class="trm-menu-btn">
+			<span></span>
+		</div>
+	</div>
+</header>
+            <!-- top bar end -->
+
+            <!-- body -->
+            
+<div class="trm-content-start">
+    <!-- banner -->
+    <div class="trm-banner" data-scroll data-scroll-direction="vertical">
+    
+    <!-- banner cover -->
+    <img style="object-position:top;object-fit:cover;" alt="banner" class="trm-banner-cover" data-scroll data-scroll-direction="vertical" data-scroll-speed="-3" src="https://pic1.zhimg.com/v2-b3c2c6745b9421a13a3c4706b19223b3_r.jpg?source=1940ef5c">
+    <!-- banner cover end -->
+    
+
+    <!-- banner content -->
+    <div class="trm-banner-content trm-overlay">
+        <div class="container" data-scroll data-scroll-direction="vertical" data-scroll-speed="0">
+            <div class="row">
+                
+                <div class="col-lg-4"></div>
+                
+                <div class="col-lg-8">
+
+                    <!-- banner title -->
+                    <div class="trm-banner-text ">
+                        <div class="trm-label trm-mb-20">
+                            NEWS LETTER
+                        </div>
+                        <h1 class="trm-mb-30 trm-hsmb-font">
+                            冒泡排序的理解？
+                        </h1>
+
+                        
+                            <ul class="trm-breadcrumbs trm-label">
+                                <li>
+                                    <a href="/" class="trm-anima-link">Home</a>
+                                </li>
+                                <li>
+                                    <span>
+                                        2023
+                                    </span
+                                ></li>
+                            </ul>
+                        
+                    </div>
+                    <!-- banner title end -->
+
+                    <!-- scroll hint -->
+                    <a href="#about-triger" data-scroll-to="#about-triger" data-scroll-offset="-130" class="trm-scroll-hint-frame">
+                        <div class="trm-scroll-hint"></div>
+                        <span class="trm-label">Scroll down</span>
+                    </a>
+                    <!-- scroll hint end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- banner content end -->
+</div>
+    <!-- banner end -->
+    <div class="container">
+        <div class="row">
+            
+                <div id="page-sidebar" class="col-lg-4 hidden-sm">
+                    <!-- main card -->
+                    
+
+<div class="trm-main-card-frame trm-sidebar">
+    <div class="trm-main-card" data-scroll data-scroll-repeat data-scroll-sticky data-scroll-target=".locomotive-scroll__sticky-target" data-scroll-offset="60"> 
+    
+        <!-- card header -->
+<div class="trm-mc-header">
+    <div class="trm-avatar-frame trm-mb-20">
+        <img alt="Avatar" class="trm-avatar" src="/img/avatar.jpg">
+    </div>
+    <h5 class="trm-name trm-mb-15">
+        Silvora
+    </h5>
+    
+</div>
+<!-- card header end -->
+        <!-- sidebar social -->
+
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<div class="trm-social">
+    
+        <a href="https://github.com/Silvora" title="github" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-github-square"></i>
+        </a>
+    
+        <a href="https://facebook.com" title="facebook" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-facebook"></i>
+        </a>
+    
+        <a href="https://google.com" title="google" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-google-plus-square"></i>
+        </a>
+    
+        <a href="https://tumblr.com" title="tumblr" rel="nofollow" target="_blank">
+            <i class="iconfont fab fa-tumblr-square"></i>
+        </a>
+    
+</div>
+
+<!-- sidebar social end -->
+        <!-- info -->
+<div class="trm-divider trm-mb-40 trm-mt-40"></div>
+<ul class="trm-table trm-mb-20">
+    
+        <li>
+            <div class="trm-label">
+                前端:
+            </div>
+            <div class="trm-label trm-label-light">
+                Vue/React
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                后端:
+            </div>
+            <div class="trm-label trm-label-light">
+                Node/GO
+            </div>
+        </li>
+    
+        <li>
+            <div class="trm-label">
+                其它:
+            </div>
+            <div class="trm-label trm-label-light">
+                Flutter
+            </div>
+        </li>
+    
+</ul>
+<!-- info end -->
+
+        
+    <div class="trm-divider trm-mb-40 trm-mt-40"></div>
+    <!-- action button -->
+    <div class="text-center">
+        <a href="mailto:757909414@qq.com" class="trm-btn">
+            联系我
+            <i class="iconfont far fa-envelope"></i>
+        </a>
+    </div>
+    <!-- action button end -->
+
+    
+    </div>
+</div>
+                    <!-- main card end -->
+                </div>
+            
+            <div id="page-content" class="col-lg-8">
+                <div class="trm-content" id="trm-content">
+                    <div data-scroll data-scroll-repeat data-scroll-offset="500" id="about-triger"></div>
+
+                    <div id="post-info" class="row hidden-sm">
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-calendar-alt trm-icon"></i><br>
+            01/21
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-clock trm-icon"></i><br>
+            16:24
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div id="post-author" class="trm-card trm-label trm-label-light text-center">
+            <i class="iconfont far fa-user trm-icon"></i><br>
+            Silvora
+        </div>
+    </div>
+</div>
+<div class="trm-card ">
+    <article id="article-container" class="trm-publication">
+    <h1 id="面试官：说说你对冒泡排序的理解？如何实现？应用场景？"><a href="#面试官：说说你对冒泡排序的理解？如何实现？应用场景？" class="headerlink" title="面试官：说说你对冒泡排序的理解？如何实现？应用场景？"></a>面试官：说说你对冒泡排序的理解？如何实现？应用场景？</h1><p> <img src="https://static.vue-js.com/6f5e0850-2652-11ec-a752-75723a64e8f5.png" loading="lazy" onerror='this.onerror=null;this.src="/img/404.jpg"'></p>
+<h2 id="一、是什么"><a href="#一、是什么" class="headerlink" title="一、是什么"></a>一、是什么</h2><p>冒泡排序（Bubble Sort），是一种计算机科学领域的较简单的排序算法</p>
+<p>冒泡排序的思想就是在每次遍历一遍未排序的数列之后，将一个数据元素浮上去（也就是排好了一个数据）</p>
+<p>如同碳酸饮料中二氧化碳的气泡最终会上浮到顶端一样，故名“冒泡排序”</p>
+<p>假如我们要把 12、35、99、18、76 这 5 个数从大到小进行排序，那么数越大，越需要把它放在前面</p>
+<p>思路如下：</p>
+<ul>
+<li>从后开始遍历，首先比较 18 和 76，发现 76 比 18 大，就把两个数交换顺序，得到 12、35、99、76、18</li>
+<li>接着比较 76 和 99，发现 76 比 99 小，所以不用交换顺序</li>
+<li>接着比较 99 和 35，发现 99 比 35 大，交换顺序</li>
+<li>接着比较 99 和 12，发现 99 比 12 大，交换顺序</li>
+</ul>
+<p>最终第 1 趟排序的结果变成了 99、12、35、76、18，如下图所示：</p>
+<p> <img src="https://static.vue-js.com/7a363770-2652-11ec-8e64-91fdec0f05a1.png" loading="lazy" onerror='this.onerror=null;this.src="/img/404.jpg"'></p>
+<p>上述可以看到，经过第一趟的排序，可以得到最大的元素，接下来第二趟排序则对剩下的的4个元素进行排序，如下图所示：</p>
+<p> <img src="https://static.vue-js.com/84b9ddf0-2652-11ec-a752-75723a64e8f5.png" loading="lazy" onerror='this.onerror=null;this.src="/img/404.jpg"'></p>
+<p>经过第 2 趟排序，结果为 99、76、12、35、18</p>
+<p>然后开始第3趟的排序，结果为99、76、35、12、18</p>
+<p>然后第四趟排序结果为99、76、35、18、12</p>
+<p>经过 4 趟排序之后，只剩一个 12 需要排序了，这时已经没有可比较的元素了，这时排序完成</p>
+<h2 id="二、如何实现"><a href="#二、如何实现" class="headerlink" title="二、如何实现"></a>二、如何实现</h2><p>如果要实现一个从小到大的排序，算法原理如下：</p>
+<ul>
+<li>首先比较相邻的元素，如果第一个元素比第二个元素大，则交换它们</li>
+<li>针对每一对相邻元素做同样的工作，从开始第一对到结尾的最后一对，这样，最后的元素回事最大的数</li>
+<li>针对所有的元素重复以上的步骤，除了最后一个</li>
+<li>持续每次对越来越少的元素重复上面的步骤，直到没有任何一对数字需要比较</li>
+</ul>
+<p><img src="https://www.runoob.com/wp-content/uploads/2019/03/bubbleSort.gif" loading="lazy" onerror='this.onerror=null;this.src="/img/404.jpg"'></p>
+<p>用代码表示则如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">bubbleSort</span>(<span class="params">arr</span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> len = arr.<span class="property">length</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; len - <span class="number">1</span>; i++) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> j = <span class="number">0</span>; j &lt; len - <span class="number">1</span> - i; j++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (arr[j] &gt; arr[j+<span class="number">1</span>]) &#123;        <span class="comment">// 相邻元素两两对比</span></span><br><span class="line">                <span class="keyword">var</span> temp = arr[j+<span class="number">1</span>];        <span class="comment">// 元素交换</span></span><br><span class="line">                arr[j+<span class="number">1</span>] = arr[j];</span><br><span class="line">                arr[j] = temp;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> arr;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到：冒泡排序在每一轮排序中都会使一个元素排到一趟， 也就是最终需要 n-1 轮这样的排序</p>
+<p>而在每轮排序中都需要对相邻的两个元素进行比较，在最坏的情况下，每次比较之后都需要交换位置，此时时间复杂度为<code>O(n^2)</code></p>
+<h3 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h3><p>对冒泡排序常见的改进方法是加入一标志性变量<code>exchange</code>，用于标志某一趟排序过程中是否有数据交换</p>
+<p>如果进行某一趟排序时并没有进行数据交换，则说明数据已经按要求排列好，可立即结束排序，避免不必要的比较过程</p>
+<p>可以设置一标志性变量<code>pos</code>，用于记录每趟排序中最后一次进行交换的位置，由于<code>pos</code>位置之后的记录均已交换到位，故在进行下一趟排序时只要扫描到<code>pos</code>位置即可，如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">bubbleSort1</span>(<span class="params">arr</span>)&#123;</span><br><span class="line"> <span class="keyword">const</span> i=arr.<span class="property">length</span>-<span class="number">1</span>;<span class="comment">//初始时,最后位置保持不变  </span></span><br><span class="line"> <span class="keyword">while</span>(i&gt;<span class="number">0</span>)&#123;</span><br><span class="line">  <span class="keyword">let</span> pos = <span class="number">0</span>;<span class="comment">//每趟开始时,无记录交换</span></span><br><span class="line">  <span class="keyword">for</span>(<span class="keyword">let</span> j = <span class="number">0</span>; j &lt; i; j++)&#123;</span><br><span class="line">   <span class="keyword">if</span>(arr[j] &gt; arr[j+<span class="number">1</span>])&#123;</span><br><span class="line">        <span class="keyword">let</span> tmp = arr[j];</span><br><span class="line">        arr[j] = arr[j+<span class="number">1</span>];</span><br><span class="line">        arr[j+<span class="number">1</span>] = tmp;</span><br><span class="line">    pos = j;<span class="comment">//记录最后交换的位置  </span></span><br><span class="line">   &#125;   </span><br><span class="line">  &#125;</span><br><span class="line">  i = pos;<span class="comment">//为下一趟排序作准备</span></span><br><span class="line"> &#125;</span><br><span class="line"> <span class="keyword">return</span> arr;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在待排序的数列有序的情况下，只需要一轮排序并且不用交换，此时情况最好，时间复杂度为<code>O(n)</code></p>
+<p>并且从上述比较中看到，只有后一个元素比前面的元素大（小）时才会对它们交换位置并向上冒出，对于同样大小的元素，是不需要交换位置的，所以对于同样大小的元素来说，相对位置是不会改变的，因此， 冒泡排序是稳定的</p>
+<h2 id="三、应用场景"><a href="#三、应用场景" class="headerlink" title="三、应用场景"></a>三、应用场景</h2><p>冒泡排的核心部分是双重嵌套循环，<br>时间复杂度是 O(N 2 )，相比其它排序算法，这是一个相对较高的时间复杂度，一般情况不推荐使用，由于冒泡排序的简洁性，通常被用来对于程序设计入门的学生介绍算法的概念</p>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/4602306">https://baike.baidu.com/item/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/4602306</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.runoob.com/w3cnote/bubble-sort.html">https://www.runoob.com/w3cnote/bubble-sort.html</a></li>
+<li><a target="_blank" rel="noopener" href="http://data.biancheng.net/view/116.html">http://data.biancheng.net/view/116.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://dsb123dsb.github.io/2017/03/07/js%E5%AE%9E%E7%8E%B0%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F%E4%BB%A5%E5%8F%8A%E4%BC%98%E5%8C%96/">https://dsb123dsb.github.io/2017/03/07/js%E5%AE%9E%E7%8E%B0%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F%E4%BB%A5%E5%8F%8A%E4%BC%98%E5%8C%96/</a></li>
+</ul>
+
+</article>
+    
+    
+</div>
+<div id="post-next-prev" class="row">
+    <div class="col-lg-12">
+        <!-- title -->
+        <h5 class="trm-title-with-divider">
+            其他文章
+            <span data-number="02"></span>
+        </h5>
+    </div>
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation" data-scroll data-scroll-offset="40">
+        <a href="/2023/01/21/Algorithm/Linked%20List/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/block.jpg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/LeetCode/">
+                    LeetCode
+                </a>
+            </div>
+            <h5>
+                <a href="/2023/01/21/Algorithm/Linked%20List/" class="trm-anima-link">
+                    链表的理解？
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>23/01/21</li>
+                <li>16:24</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+    
+        <div class="col-lg-6">
+    <div class="trm-blog-card trm-scroll-animation" data-scroll data-scroll-offset="40">
+        <a href="/2023/01/21/Algorithm/design1/" class="trm-cover-frame trm-anima-link">
+            
+            
+                <img alt="cover" class="no-fancybox" src="/img/block.jpg">
+            
+        </a>
+        
+        <div class="trm-card-descr">
+            <div class="trm-label trm-category trm-mb-20">
+                <a href=" /categories/LeetCode/">
+                    LeetCode
+                </a>
+            </div>
+            <h5>
+                <a href="/2023/01/21/Algorithm/design1/" class="trm-anima-link">
+                    分而治之、动态规划的理解？
+                </a>
+            </h5>
+            <div class="trm-divider trm-mb-20 trm-mt-20"></div>
+            <ul class="trm-card-data trm-label">
+                <li>23/01/21</li>
+                <li>16:24</li>
+                
+                
+            </ul>
+        </div>
+    </div>
+</div>
+    
+</div>
+
+    
+
+
+
+                    <div class="trm-divider footer-divider"></div>
+
+                    <!-- footer -->
+                    <footer class="trm-scroll-animation" data-scroll data-scroll-offset="50">
+
+    
+
+    
+        <div class="trm-footer-item">
+            <span>© 2023- 2023</span>
+            <span class="footer-separator"data-separator=" · "></span>
+            <span class="trm-accent-color">Silvora</span>
+        </div>
+    
+
+      
+
+     
+
+     
+</footer>
+ 
+                    <!-- footer end -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- body end -->
+
+            <div class="trm-fixed-container" data-scroll data-scroll-sticky data-scroll-target=".locomotive-scroll__sticky-target" data-scroll-offset="-10">
+    
+        <div class="trm-fixed-btn" data-title="阅读模式" onclick="asyncFun.switchReadMode()">
+            <i class="iconfont fas fa-book-reader"></i>
+        </div>
+    
+    
+    <div id="trm-back-top" class="trm-fixed-btn" data-title="回到顶部">
+        <i class="iconfont fas fa-arrow-up"></i>
+    </div>
+</div>
+          </div>
+        </div>
+      </div>
+      <!-- scroll container end -->
+
+  </div>
+  <!-- app wrapper end -->
+
+  
+<div class="trm-search-popup">
+    <div class="trm-search-header">
+        <span class="trm-search-popup-btn-close">
+            <i class="iconfont fas fa-times"></i>
+        </span>
+    </div>
+    <div class="form trm-search-form">
+        <input class="trm-search-input" type="text" placeholder="搜索...">
+    </div>
+    <div class="trm-search-result-container">
+
+    </div>
+</div>
+
+  <!-- Plugin -->
+
+
+
+
+    
+    
+<script src="https://unpkg.com/locomotive-scroll@4.1.4/dist/locomotive-scroll.min.js"></script>
+
+    
+<script src="https://unpkg.com/@fancyapps/ui@4.0/dist/fancybox.umd.js"></script>
+
+    
+
+    
+
+    
+        
+<script src="https://unpkg.com/hexo-generator-searchdb@1.4.0/dist/search.js"></script>
+
+        <script src="/js/plugins/local_search.js?v=2.0.3"></script>
+    
+
+    <!-- 数学公式 -->
+    
+
+    <!-- 评论插件 -->
+    
+        
+
+        
+    
+
+
+
+<!-- CDN -->
+
+
+    
+
+    
+
+    
+
+
+
+
+    <!-- Service Worker -->
+    
+    <!-- baidu push -->
+    
+    <script data-swup-reload-script>
+        (function () {
+            var bp = document.createElement('script');
+            var curProtocol = window.location.protocol.split(':')[0];
+            if (curProtocol === 'https') {
+                bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+            }
+            else {
+                bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+            }
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(bp, s);
+        })();
+    </script>
+
+
+
+<script id="async-script" src="/js/main.js?v=2.0.3"></script>
+
+</body>
+
+</html>
